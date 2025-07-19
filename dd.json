@@ -1,0 +1,23 @@
+{
+  "id": 6663284,
+  "name": "dd",
+  "target": "branch",
+  "source_type": "Repository",
+  "source": "fanta1mohamed/quran",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "exclude": [],
+      "include": []
+    }
+  },
+  "rules": [
+    {
+      "type": "deletion"
+    },
+    {
+      "type": "non_fast_forward"
+    }
+  ],
+  "bypass_actors": []
+}

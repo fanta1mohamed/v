@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حبل الله</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/babel-standalone@7.22.5/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Amiri', serif; direction: rtl; text-align: right; background-color: #f8f9fa; }
+    .verse { font-size: 1.5rem; font-weight: bold; color: #1a3c34; }
+    .tadabbur { font-size: 1rem; color: #4b5e4a; }
+    .secret-mode { background-color: #e5e7eb; color: #4b5e4a; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // بيانات القرآن والأدعية
+    const quranData = {
+      surahs: [
+        {
+          id: 1,
+          name: "النبأ",
+          verses: [
+            { 
+              id: 1, 
+              text: "عَمَّ يَتَسَاءَلُونَ", 
+              tadabbur: "تبدأ السورة بسؤال يوقظ القلب... ما الذي يجعل الناس تتساءل؟ إنها لحظة تهيئة للخبر العظيم.", 
+              tadabburDeep: "تكرار السؤال يدل على فزع المعنى... كأنك كلما فهمت شيئًا، قيل لك: بل ليس بعد!", 
+              audio: "tadabbur_1.mp3", 
+              recitation: "verse_1.mp3" 
+            },
+            { 
+              id: 2, 
+              text: "عَنِ النَّبَإِ الْعَظِيمِ", 
+              tadabbur: "النبأ العظيم... خبر يهز القلوب، فهل أنت مستعد لسماعه؟", 
+              tadabburDeep: "النبأ يعظم في القلب كلما اقتربت منه... هل لاحظت عظمة الوحي؟", 
+              audio: "tadabbur_2.mp3", 
+              recitation: "verse_2.mp3" 
+            },
+            { 
+              id: 3, 
+              text: "الَّذِي هُمْ فِيهِ مُخْتَلِفُونَ", 
+              tadabbur: "اختلاف الناس حول النبأ يدعوك للتأمل... هل قلبك مع الحق؟", 
+              tadabburDeep: "الاختلاف هنا يعكس طباع البشر... لكن الحق واحد لا يتغير.", 
+              audio: "tadabbur_3.mp3", 
+              recitation: "verse_3.mp3" 
+            }
+          ],
+          conceptMap: `<svg width="300" height="150"><rect x="10" y="10" width="280" height="130" fill="#d1fae5" /><text x="50" y="50" fill="#1a3c34">مفاهيم سورة النبأ</text><circle cx="150" cy="80" r="20" fill="#34d399" /><text x="140" y="85" fill="#1a3c34">السؤال</text></svg>`
+        },
+        {
+          id: 2,
+          name: "النازعات",
+          verses: [
+            { 
+              id: 1, 
+              text: "وَالنَّازِعَاتِ غَرْقًا", 
+              tadabbur: "صورة حركية تملأ القلب رهبة... هل تخيلت قوة الملائكة النازعات؟", 
+              tadabburDeep: "الغرق هنا ليس بالماء، بل بانتزاع الأرواح... تأمل قوتها!", 
+              audio: "tadabbur_4.mp3", 
+              recitation: "verse_4.mp3" 
+            },
+            { 
+              id: 2, 
+              text: "وَالنَّاشِطَاتِ نَشْطًا", 
+              tadabbur: "النشاط هنا يحمل معنى الحياة... تأمل كيف تتحرك الملائكة!", 
+              tadabburDeep: "النشط ليس مجرد حركة، بل عزيمة لا تهدأ... هل قلبك نشيط للحق؟", 
+              audio: "tadabbur_5.mp3", 
+              recitation: "verse_5.mp3" 
+            }
+          ],
+          conceptMap: `<svg width="300" height="150"><rect x="10" y="10" width="280" height="130" fill="#d1fae5" /><text x="50" y="50" fill="#1a3c34">مفاهيم سورة النازعات</text></svg>`
+        }
+      ]
+    };
+
+    const adkarData = [
+      { id: 1, text: "اللهم أنت ربي لا إله إلا أنت", category: "الصباح", source: "صحيح البخاري" },
+      { id: 2, text: "أعوذ بالله من الشيطان الرجيم", category: "الحماية", source: "القرآن الكريم" },
+      { id: 3, text: "الحمد لله الذي أحيانا بعد ما أماتنا", category: "الصباح", source: "صحيح مسلم" },
+      { id: 4, text: "اللهم إني أسألك العافية في الدنيا والآخرة", category: "الفرج", source: "سنن ابن ماجه" },
+      { id: 5, text: "رب اغفر لي ولوالدي", category: "الاستغفار", source: "القرآن الكريم" },
+      // إضافة 94 دعاءً إضافيًا (مثال مختصر)
+      ...Array.from({ length: 94 }, (_, i) => ({
+        id: i + 6,
+        text: `دعاء موثوق رقم ${i + 6}`,
+        category: ["الصباح", "المساء", "الحماية", "السفر", "الفرج", "الاستغفار"][Math.floor(Math.random() * 6)],
+        source: "مصدر موثوق"
+      }))
+    ];
+
+    // مكون شاشة الترحيب
+    const WelcomeScreen = ({ onStart }) => (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-green-100 to-green-200">
+        <h1 className="text-4xl font-bold text-green-800 mb-4">حبل الله</h1>
+        <p className="text-lg text-center text-gray-700 mb-6">
+          "أهلًا يا عبد الله، هذه رحلتك في حبل الله... كل آية باب، وكل تأمل مفتاح."<br />
+          "قرآني مش محتاج تفسير... دا نور مبين للناس، دا انت اللي فى حقه مقصر..."
+        </p>
+        <p className="text-sm text-gray-600 mb-4">بقلم: عبد الله بن عبد الله – مالك التطبيق</p>
+        <button
+          className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
+          onClick={onStart}
+        >
+          ابدأ الرحلة
+        </button>
+      </div>
+    );
+
+    // مكون عرض الآيات
+    const VerseScreen = ({ surah, onBack }) => {
+      const [selectedVerse, setSelectedVerse] = useState(null);
+      const [showConceptMap, setShowConceptMap] = useState(false);
+      const [achievements, setAchievements] = useState([]);
+
+      const addAchievement = (verseId) => {
+        if (!achievements.includes(verseId)) {
+          setAchievements([...achievements, verseId]);
+          alert("مبروك! لقد فتحت كنزًا جديدًا في رحلتك!");
+        }
+      };
+
+      return (
+        <div className="p-4">
+          <button className="mb-4 text-green-600" onClick={onBack}>رجوع</button>
+          <h2 className="text-2xl font-bold text-green-800 mb-4">{surah.name}</h2>
+          <button
+            className="mb-4 px-4 py-2 bg-blue-500 text-white rounded"
+            onClick={() => setShowConceptMap(!showConceptMap)}
+          >
+            {showConceptMap ? "إخفاء خريطة المفاهيم" : "عرض خريطة المفاهيم"}
+          </button>
+          {showConceptMap && (
+            <div dangerouslySetInnerHTML={{ __html: surah.conceptMap }} className="mb-4"></div>
+          )}
+          {surah.verses.map(verse => (
+            <div key={verse.id} className="mb-4 p-4 bg-white rounded-lg shadow">
+              <p className="verse">{verse.text}</p>
+              <button
+                className="mt-2 mr-2 px-4 py-2 bg-green-500 text-white rounded"
+                onClick={() => setSelectedVerse(verse)}
+              >
+                ✨ تأمل
+              </button>
+              <button className="mt-2 mr-2 px-4 py-2 bg-blue-500 text-white rounded">
+                🔊 استمع بترتيل
+              </button>
+              <button
+                className="mt-2 px-4 py-2 bg-yellow-500 text-white rounded"
+                onClick={() => addAchievement(verse.id)}
+              >
+                🏆 إنجاز
+              </button>
+              {selectedVerse && selectedVerse.id === verse.id && (
+                <div className="tadabbur mt-2">
+                  <p>{verse.tadabbur}</p>
+                  {verse.tadabburDeep && (
+                    <>
+                      <p className="font-bold mt-2">تأمل أعمق:</p>
+                      <p>{verse.tadabburDeep}</p>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+    };
+
+    // مكون الأدعية
+    const AdkarScreen = ({ onBack }) => {
+      const [category, setCategory] = useState("الكل");
+      const categories = ["الكل", ...new Set(adkarData.map(dua => dua.category))];
+
+      return (
+        <div className="p-4">
+          <button className="mb-4 text-green-600" onClick={onBack}>رجوع</button>
+          <h2 className="text-2xl font-bold text-green-800 mb-4">الأدعية الموثوقة</h2>
+          <div className="mb-4">
+            <label className="ml-2">اختر التصنيف:</label>
+            <select
+              className="p-2 border rounded"
+              value={category}
+              onChange={e => setCategory(e.target.value)}
+            >
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+          {adkarData
+            .filter(dua => category === "الكل" || dua.category === category)
+            .map(dua => (
+              <div key={dua.id} className="mb-4 p-4 bg-white rounded-lg shadow">
+                <p>{dua.text}</p>
+                <p className="text-sm text-gray-600">التصنيف: {dua.category} | المصدر: {dua.source}</p>
+              </div>
+            ))}
+        </div>
+      );
+    };
+
+    // مكون التطبيق الرئيسي
+    const App = () => {
+      const [screen, setScreen] = useState("welcome");
+      const [secretMode, setSecretMode] = useState(false);
+
+      return (
+        <div className={secretMode ? "secret-mode min-h-screen" : "min-h-screen"}>
+          <button
+            className="fixed top-4
